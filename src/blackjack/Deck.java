@@ -4,6 +4,7 @@ public class Deck {
 	private String suit[] = {"Heart","Spades","Diamonds","Clubs"};
 	private String value[] = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
 	private Card deck[]= new Card[52];
+	private Card temp;
 
 	public Deck() {
 		for (int i = 0; i < suit.length; i++) {
@@ -18,7 +19,6 @@ public class Deck {
 	}
 
 	public void shuffle() {
-		Card temp;
 		int a;
 		int b;
 
@@ -29,6 +29,18 @@ public class Deck {
 			deck[a] = new Card(deck[b]);
 			deck[b] = new Card(temp);
 		}
+	}
+
+	public Card dealCard() {
+		temp = new Card(deck[0]);
+		for (int i = 0; i < deck.length; i++) {
+			if (i == deck.length-1) {
+				deck[i] = new Card(temp);
+			} else {
+				deck[i] = new Card(deck[i+1]);
+			}
+		}
+		return temp;
 	}
 
 	public Card[] getDeck() {
