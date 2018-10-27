@@ -29,7 +29,7 @@ public class Game {
 		return Boolean.parseBoolean(win);
 	}
 	
-	private int sum(ArrayList<Card> cardList) {
+	public int sum(ArrayList<Card> cardList) {
 		int sum = 0;
 		int aceCount = 0;
 		for (int i = 0; i < cardList.size(); i++) {
@@ -70,14 +70,27 @@ public class Game {
 		pCards.set(0, deck.dealCard());
 	}
 	
-	public String print(ArrayList<Card> pCards) {
-		String printCard = "[";
+	public String printCards(ArrayList<Card> pCards) {
+		String printCard = "";
 		for (int i = 0; i < pCards.size(); i++) {
-			printCard = printCard + pCards.get(i).getCardValue() 
-					+ " of " + pCards.get(i).getCardSuit() + ", ";
+			printCard = printCard + pCards.get(i).toString() + ", ";
 		}
-		printCard = printCard.substring(0, printCard.length() - 2) + "]";
+		printCard = printCard.substring(0, printCard.length() - 2);
 		return printCard;
+	}
+	
+	public String printUI() {
+		String print = "Dealer's cards: " + dealerCards.get(0) + "\n" +
+		"Your cards: " + printCards(playerCards) + "\n" +
+		"Sum of cards: " + sum(playerCards) + "\n";
+		return print;
+	}
+	
+	public String printAll() {
+		String print = "Dealer's cards: " + printCards(dealerCards) + "\n" +
+				"Your cards: " + printCards(playerCards) + "\n" +
+				"Sum of cards: " + sum(playerCards) + "\n";
+				return print;
 	}
 
 	public ArrayList<Card> getDealerCards() {

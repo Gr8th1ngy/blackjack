@@ -60,6 +60,10 @@ class Card {
 		this.cardSuit = card.getCardSuit();
 		this.cardValue = card.getCardValue();
 	}
+	
+	public String toString() {
+		return cardValue + " of " + cardSuit;
+	}
 
 	public String getCardSuit() {
 		return cardSuit;
