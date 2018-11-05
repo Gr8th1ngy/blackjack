@@ -22,7 +22,7 @@ public class Deck {
 		int a;
 		int b;
 
-		for (int j=0 ; j < 50; j++) {
+		for (int j=0 ; j < 100; j++) {
 			a = (int) (Math.random()*52);
 			b = (int) (Math.random()*52);
 			temp = new Card (deck[a]);
