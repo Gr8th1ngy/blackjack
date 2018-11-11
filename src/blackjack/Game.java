@@ -8,17 +8,29 @@ public class Game {
 	private ArrayList<Card> dealerCards;
 	private ArrayList<Card> playerCards;
 	private ArrayList<Card> playerCardsSplit;
-	private String win = "true";
+	
+	private int wagerAmount;
+	private int totalMoney;
+	
+	private String win;
+	private boolean split;
 
 	public Game() {
 		deck = new Deck();
 		deck.shuffle();
+		
+		totalMoney = 1000;
+		
 		playerCards = new ArrayList<Card>();
 		dealerCards = new ArrayList<Card>();
+		playerCardsSplit = new ArrayList<Card>();
 		dealerCards.add(deck.dealCard());
 		playerCards.add(deck.dealCard());
 		dealerCards.add(deck.dealCard());
 		playerCards.add(deck.dealCard());
+		
+		win = "true";
+		split = false;
 	}
 
 	public boolean hit(ArrayList<Card> pCards) {
@@ -68,9 +80,11 @@ public class Game {
 	}
 
 	public void split(ArrayList<Card> pCards) {
-		playerCardsSplit.add(pCards.get(0));
+		playerCardsSplit.add(pCards.get(1));
 		playerCardsSplit.add(deck.dealCard());
-		pCards.set(0, deck.dealCard());
+		pCards.set(1, deck.dealCard());
+		
+		split = true;
 	}
 
 	public String printCards(ArrayList<Card> pCards) {
@@ -83,17 +97,30 @@ public class Game {
 	}
 
 	public String printUI() {
-		String print = "Dealer's cards: " + dealerCards.get(0) + "\n" +
+		String print = "Total money: " + totalMoney + "\n" +
+				"Your bet: " + wagerAmount + "\n" +
+				"Dealer's cards: " + dealerCards.get(0) + "\n" +
 				"Your cards: " + printCards(playerCards) + "\n" +
 				"Sum of cards: " + sum(playerCards) + "\n";
+		if (split) {
+			print = print + "Splitted cards: " + printCards(playerCardsSplit) + "\n" +
+					"Sum of splitted cards: " + sum(playerCardsSplit) + "\n";
+		}
+		
 		return print;
 	}
 
 	public String printAll() {
-		String print = "Dealer's cards: " + printCards(dealerCards) + "\n" +
+		String print = "Total money: " + totalMoney + "\n" +
+				"Dealer's cards: " + printCards(dealerCards) + "\n" +
 				"Sum of cards: " + sum(dealerCards) + "\n" +
 				"Your cards: " + printCards(playerCards) + "\n" +
 				"Sum of cards: " + sum(playerCards) + "\n";
+		
+		if (split) {
+			print = print + "Splitted cards: " + printCards(playerCardsSplit) + "\n" +
+					"Sum of splitted cards: " + sum(playerCardsSplit) + "\n";
+		}
 		return print;
 	}
 
@@ -112,4 +139,18 @@ public class Game {
 	public String getWin() {
 		return win;
 	}
+	
+	public void setWagerAmount(int wagerAmount) {
+		this.wagerAmount = wagerAmount;
+	}
+	
+	public boolean isSplit() {
+		return split;
+	}
+
+	public int getTotalMoney() {
+		return totalMoney;
+	}
+	
+	
 }

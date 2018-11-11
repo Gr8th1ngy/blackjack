@@ -60,9 +60,18 @@ class Card {
 		this.cardSuit = card.getCardSuit();
 		this.cardValue = card.getCardValue();
 	}
-	
+
 	public String toString() {
 		return cardValue + " of " + cardSuit;
+	}
+
+	public boolean equals(Card card) {
+		if (this.cardValue.equals(card.cardValue)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	public String getCardSuit() {

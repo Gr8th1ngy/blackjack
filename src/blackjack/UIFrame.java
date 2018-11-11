@@ -12,7 +12,9 @@ public class UIFrame extends JFrame {
 	private JButton stand;
 	private JButton split;
 	private JPanel panel;
-	private JTextArea textArea;
+	private static JTextArea textArea;
+	
+	private static int betValue;
 
 	final int FRAME_WIDTH = 800;
 	final int FRAME_HEIGHT = 500;
@@ -20,28 +22,48 @@ public class UIFrame extends JFrame {
 	private final int AREA_ROWS = 30;
 	private final int AREA_COLUMNS = 50;
 
-	private Game game;
+	private static Game game;
 
 	public static void main(String[] args) {
-		game();
-	}
-
-	public static void game() {
+		
 		JFrame frame = new UIFrame();
 
 		frame.setTitle("Welcome to Blackjack");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setVisible(true);
+
+		game();
+	}
+
+	public static void game() {
+		game = new Game();
+		boolean valid = false;
+		while(!valid) {
+			String input = JOptionPane.showInputDialog("Please input your bet: Max 100"
+					+ " Min 1. You currently have: " + game.getTotalMoney());
+
+			if (isInteger(input)) {
+				betValue = Integer.parseInt(input);
+				if (1 >= betValue)) {
+					JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		game.setWagerAmount(betValue);
+		
+		textArea.setText(game.printUI());
 	}
 
 	public UIFrame() {
-
-		game = new Game();
-
+		createTextArea();
 		createHitButton();
 		createStandButton();
-		createTextArea();
+		createSplitButton();
 		createPanel();
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 	}
@@ -49,12 +71,10 @@ public class UIFrame extends JFrame {
 	private void createTextArea() {
 		textArea = new JTextArea(AREA_ROWS, AREA_COLUMNS);
 		textArea.setEditable(false);
-		textArea.setText(game.printUI());
 		textArea.setFont(new Font("Arial Black", Font.PLAIN, 15));
 	}
 
 	private void createPanel() {
-		split = new JButton("Split");
 		JPanel panel = new JPanel();
 		JScrollPane scrollPane = new JScrollPane(textArea);
 
@@ -64,6 +84,36 @@ public class UIFrame extends JFrame {
 		panel.add(textArea);
 		panel.add(scrollPane);
 		add(panel);
+	}
+	
+	public static boolean isInteger( String input ) {
+	    try {
+	        Integer.parseInt( input );
+	        return true;
+	    }
+	    catch( Exception e ) {
+	        return false;
+	    }
+	}
+	
+	private void createSplitButton() {
+
+		split = new JButton("Split");
+		
+		ActionListener listener = new SplitListener();
+		split.addActionListener(listener);
+	}
+	
+	class SplitListener implements ActionListener{
+
+		public void actionPerformed(ActionEvent arg0) {
+			if (game.getPlayerCards().get(0).equals(game.getPlayerCards().get(1))) {
+			game.split(game.getPlayerCards());
+				textArea.setText(game.printUI());
+			}
+			
+		}
+		
 	}
 
 	private void createHitButton() {
