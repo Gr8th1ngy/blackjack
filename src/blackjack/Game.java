@@ -15,11 +15,11 @@ public class Game {
 	private String win;
 	private boolean split;
 
-	public Game() {
+	public Game(int totalMoney) {
 		deck = new Deck();
 		deck.shuffle();
 		
-		totalMoney = 1000;
+		this.totalMoney = totalMoney;
 		
 		playerCards = new ArrayList<Card>();
 		dealerCards = new ArrayList<Card>();
@@ -37,6 +37,7 @@ public class Game {
 		pCards.add(deck.dealCard());
 		if (sum(pCards) > 21) {
 			win = "false";
+			totalMoney -= wagerAmount;
 		}
 		return Boolean.parseBoolean(win);
 	}
@@ -70,10 +71,12 @@ public class Game {
 			dealerCards.add(deck.dealCard());
 		}
 		
-		if (sum(dealerCards) > 21) {
+		if (sum(dealerCards) > 21 || sum(dealerCards) < sum(pCards)) {
 			win = "true";
+			totalMoney += wagerAmount;
 		} else if (sum(dealerCards) > sum(pCards)) {
 			win = "false";
+			totalMoney -= wagerAmount;
 		} else if (sum(dealerCards) == sum(pCards)) {
 			win = "draw";
 		}
@@ -112,6 +115,7 @@ public class Game {
 
 	public String printAll() {
 		String print = "Total money: " + totalMoney + "\n" +
+				"Your bet: " + wagerAmount + "\n" +
 				"Dealer's cards: " + printCards(dealerCards) + "\n" +
 				"Sum of cards: " + sum(dealerCards) + "\n" +
 				"Your cards: " + printCards(playerCards) + "\n" +

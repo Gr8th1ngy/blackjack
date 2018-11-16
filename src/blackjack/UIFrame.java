@@ -13,8 +13,9 @@ public class UIFrame extends JFrame {
 	private JButton split;
 	private JPanel panel;
 	private static JTextArea textArea;
-	
+
 	private static int betValue;
+	private static int totalMoney;
 
 	final int FRAME_WIDTH = 800;
 	final int FRAME_HEIGHT = 500;
@@ -25,7 +26,7 @@ public class UIFrame extends JFrame {
 	private static Game game;
 
 	public static void main(String[] args) {
-		
+
 		JFrame frame = new UIFrame();
 
 		frame.setTitle("Welcome to Blackjack");
@@ -33,29 +34,34 @@ public class UIFrame extends JFrame {
 
 		frame.setVisible(true);
 
-		game();
+		game(1000);
 	}
 
-	public static void game() {
-		game = new Game();
+	public static void game(int totalMoney) {
+		game = new Game(totalMoney);
 		boolean valid = false;
 		while(!valid) {
 			String input = JOptionPane.showInputDialog("Please input your bet: Max 100"
 					+ " Min 1. You currently have: " + game.getTotalMoney());
-
-			if (isInteger(input)) {
+			if (input == null || input.isEmpty()) {
+				System.exit(0);
+			} else if (isInteger(input)) {
 				betValue = Integer.parseInt(input);
-				if (1 >= betValue)) {
-					JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
+				if (1 > betValue) {
+					JOptionPane.showMessageDialog(null, "Please input a wager of at least 1", "OOPS!", JOptionPane.ERROR_MESSAGE);
+				} else if (betValue > game.getTotalMoney()) {
+					JOptionPane.showMessageDialog(null, "Your wager is above your total money of " +
+							game.getTotalMoney(), "OOPS!", JOptionPane.ERROR_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
+					valid = true;
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Please input a numeric value", "OOPS!", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+
 		game.setWagerAmount(betValue);
-		
+
 		textArea.setText(game.printUI());
 	}
 
@@ -85,35 +91,35 @@ public class UIFrame extends JFrame {
 		panel.add(scrollPane);
 		add(panel);
 	}
-	
+
 	public static boolean isInteger( String input ) {
-	    try {
-	        Integer.parseInt( input );
-	        return true;
-	    }
-	    catch( Exception e ) {
-	        return false;
-	    }
+		try {
+			Integer.parseInt( input );
+			return true;
+		}
+		catch( Exception e ) {
+			return false;
+		}
 	}
-	
+
 	private void createSplitButton() {
 
 		split = new JButton("Split");
-		
+
 		ActionListener listener = new SplitListener();
 		split.addActionListener(listener);
 	}
-	
+
 	class SplitListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (game.getPlayerCards().get(0).equals(game.getPlayerCards().get(1))) {
-			game.split(game.getPlayerCards());
+				game.split(game.getPlayerCards());
 				textArea.setText(game.printUI());
 			}
-			
+
 		}
-		
+
 	}
 
 	private void createHitButton() {
@@ -155,7 +161,7 @@ public class UIFrame extends JFrame {
 			} else {
 				game.stand(game.getPlayerCards());
 				textArea.setText(game.printAll());
-				
+
 				if (game.getWin() == "draw") {
 					textArea.append("Push");
 				} else if (Boolean.parseBoolean(game.getWin())) {
@@ -176,7 +182,8 @@ public class UIFrame extends JFrame {
 			if (play == 0) {
 				System.exit(0);
 			} else {
-				game();
+				totalMoney = game.getTotalMoney();
+				game(totalMoney);
 			}
 		}
 
