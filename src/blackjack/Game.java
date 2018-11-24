@@ -86,6 +86,7 @@ public class Game {
 		playerCardsSplit.add(pCards.get(1));
 		playerCardsSplit.add(deck.dealCard());
 		pCards.set(1, deck.dealCard());
+		wagerAmount = wagerAmount*2;
 		
 		split = true;
 	}

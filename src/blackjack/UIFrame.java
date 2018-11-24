@@ -16,6 +16,7 @@ public class UIFrame extends JFrame {
 
 	private static int betValue;
 	private static int totalMoney;
+	private boolean splitTurn;
 
 	final int FRAME_WIDTH = 800;
 	final int FRAME_HEIGHT = 500;
@@ -52,6 +53,8 @@ public class UIFrame extends JFrame {
 				} else if (betValue > game.getTotalMoney()) {
 					JOptionPane.showMessageDialog(null, "Your wager is above your total money of " +
 							game.getTotalMoney(), "OOPS!", JOptionPane.ERROR_MESSAGE);
+				} else if (betValue > 100) {
+					JOptionPane.showMessageDialog(null, "Your wager has to be below 100 ", "OOPS!", JOptionPane.ERROR_MESSAGE);
 				} else {
 					valid = true;
 				}
@@ -114,12 +117,16 @@ public class UIFrame extends JFrame {
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (game.getPlayerCards().get(0).equals(game.getPlayerCards().get(1))) {
-				game.split(game.getPlayerCards());
-				textArea.setText(game.printUI());
+				if (betValue*2 > totalMoney) {
+					JOptionPane.showMessageDialog(null, "You don't have enough money for a split", "Can't split", JOptionPane.ERROR_MESSAGE);
+				} else {
+					game.split(game.getPlayerCards());
+					textArea.setText(game.printUI());
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "The first two cards have to be the same value to split", "Can't split", JOptionPane.ERROR_MESSAGE);
 			}
-
 		}
-
 	}
 
 	private void createHitButton() {
@@ -134,12 +141,23 @@ public class UIFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 
 			boolean bust = false;
-			bust = game.hit(game.getPlayerCards());
+			if (splitTurn) {
+				bust = game.hit(game.getPlayerCardsSplit());
 
-			textArea.setText(game.printUI());
+				textArea.setText(game.printUI());
 
-			if (!bust) {
-				stand.doClick();
+				if (!bust) {
+					splitTurn = false;
+					stand.doClick();
+				}
+			} else {
+				bust = game.hit(game.getPlayerCards());
+
+				textArea.setText(game.printUI());
+
+				if (!bust) {
+					stand.doClick();
+				}
 			}
 		}
 	}
@@ -160,6 +178,13 @@ public class UIFrame extends JFrame {
 				textArea.append("Busted!");
 			} else {
 				game.stand(game.getPlayerCards());
+				if (game.isSplit() && !splitTurn) {
+					splitTurn = true;
+				} else if (game.isSplit() && splitTurn) {
+					splitTurn = false;
+				}
+			}
+			if (!splitTurn) {
 				textArea.setText(game.printAll());
 
 				if (game.getWin() == "draw") {
@@ -169,25 +194,41 @@ public class UIFrame extends JFrame {
 				} else {
 					textArea.append("You lose!");
 				}
-			}
-			String again[] = {"No", "Yes"};
-			int play = JOptionPane.showOptionDialog(null
-					,"Next game?"
-					, "Continue"
-					, JOptionPane.PLAIN_MESSAGE
-					, JOptionPane.DEFAULT_OPTION
-					, null
-					, again
-					, again[1]);
-			if (play == 0) {
-				System.exit(0);
-			} else {
+
+				String again[] = {"No", "Yes"};
+				int play = 0;
 				totalMoney = game.getTotalMoney();
-				game(totalMoney);
+				if (totalMoney <= 0) {
+					play = JOptionPane.showOptionDialog(null
+							,"You got beaten by a bot dealer that knows one move :p "
+									+ "Restart the game?"
+									, "Game over!"
+									, JOptionPane.PLAIN_MESSAGE
+									, JOptionPane.DEFAULT_OPTION
+									, null
+									, again
+									, again[1]);
+				} else {
+					play = JOptionPane.showOptionDialog(null
+							,"Next game?"
+							, "Continue"
+							, JOptionPane.PLAIN_MESSAGE
+							, JOptionPane.DEFAULT_OPTION
+							, null
+							, again
+							, again[1]);
+				}
+				if (play == 0) {
+					System.exit(0);
+				} else if (totalMoney == 0){
+					game(1000);
+				} else {
+					game(totalMoney);
+				}
 			}
 		}
-
 	}
 }
+
 
 
