@@ -29,17 +29,16 @@ public class Game {
 		dealerCards.add(deck.dealCard());
 		playerCards.add(deck.dealCard());
 		
-		win = "true";
+		win = "You win!";
 		split = false;
 	}
 
-	public boolean hit(ArrayList<Card> pCards) {
+	public void hit(ArrayList<Card> pCards) {
 		pCards.add(deck.dealCard());
 		if (sum(pCards) > 21) {
-			win = "false";
+			win = "Busted!";
 			totalMoney -= wagerAmount;
 		}
-		return Boolean.parseBoolean(win);
 	}
 
 	public int sum(ArrayList<Card> cardList) {
@@ -72,13 +71,13 @@ public class Game {
 		}
 		
 		if (sum(dealerCards) > 21 || sum(dealerCards) < sum(pCards)) {
-			win = "true";
+			win = "You win!";
 			totalMoney += wagerAmount;
 		} else if (sum(dealerCards) > sum(pCards)) {
-			win = "false";
+			win = "You lose!";
 			totalMoney -= wagerAmount;
 		} else if (sum(dealerCards) == sum(pCards)) {
-			win = "draw";
+			win = "Push";
 		}
 	}
 
@@ -106,6 +105,9 @@ public class Game {
 				"Dealer's cards: " + dealerCards.get(0) + "\n" +
 				"Your cards: " + printCards(playerCards) + "\n" +
 				"Sum of cards: " + sum(playerCards) + "\n";
+		if (win.equals("Busted!")) {
+			print += win;
+		}
 		if (split) {
 			print = print + "Splitted cards: " + printCards(playerCardsSplit) + "\n" +
 					"Sum of splitted cards: " + sum(playerCardsSplit) + "\n";
@@ -124,7 +126,7 @@ public class Game {
 		
 		if (split) {
 			print = print + "Splitted cards: " + printCards(playerCardsSplit) + "\n" +
-					"Sum of splitted cards: " + sum(playerCardsSplit) + "\n";
+					"Sum of splitted cards: " + sum(playerCardsSplit) + "\n" + win;
 		}
 		return print;
 	}

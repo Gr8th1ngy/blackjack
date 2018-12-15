@@ -17,6 +17,7 @@ public class UIFrame extends JFrame {
 	private static int betValue;
 	private static int totalMoney;
 	private boolean splitTurn;
+	private String nonSplitWin;
 
 	final int FRAME_WIDTH = 800;
 	final int FRAME_HEIGHT = 500;
@@ -139,25 +140,16 @@ public class UIFrame extends JFrame {
 	class HitListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
-
-			boolean bust = false;
 			if (splitTurn) {
-				bust = game.hit(game.getPlayerCardsSplit());
-
-				textArea.setText(game.printUI());
-
-				if (!bust) {
-					splitTurn = false;
-					stand.doClick();
-				}
+				game.hit(game.getPlayerCardsSplit());
 			} else {
-				bust = game.hit(game.getPlayerCards());
+				game.hit(game.getPlayerCards());
+			}
+			textArea.setText(game.printUI());
 
-				textArea.setText(game.printUI());
-
-				if (!bust) {
-					stand.doClick();
-				}
+			if (game.getWin().equals("Busted!")) {
+				splitTurn = false;
+				stand.doClick();
 			}
 		}
 	}
@@ -174,26 +166,21 @@ public class UIFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
-			if (!Boolean.parseBoolean(game.getWin())) {
-				textArea.append("Busted!");
+			if (game.getWin().equals("Busted!")) {
+				textArea.setText(game.printUI());
 			} else {
 				game.stand(game.getPlayerCards());
 				if (game.isSplit() && !splitTurn) {
+					nonSplitWin = new String(game.getWin());
 					splitTurn = true;
 				} else if (game.isSplit() && splitTurn) {
+					game.stand(game.getPlayerCardsSplit());
 					splitTurn = false;
 				}
 			}
+
 			if (!splitTurn) {
 				textArea.setText(game.printAll());
-
-				if (game.getWin() == "draw") {
-					textArea.append("Push");
-				} else if (Boolean.parseBoolean(game.getWin())) {
-					textArea.append("You Win!");
-				} else {
-					textArea.append("You lose!");
-				}
 
 				String again[] = {"No", "Yes"};
 				int play = 0;
